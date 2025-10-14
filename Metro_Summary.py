@@ -7,7 +7,7 @@ import textwrap
 @st.cache_data
 def load_data():
     """Load the MAS Dashboard data with caching."""
-    return pd.read_csv("Data/MAS_Dashboard_Records_2025_Updated.csv")
+    return pd.read_parquet("Data/MAS_Dashboard_Records_2025_Updated.parquet")
 
 # Load data
 df = load_data()
