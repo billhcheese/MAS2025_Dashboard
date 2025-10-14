@@ -3,6 +3,8 @@ import altair as alt
 import streamlit as st
 import textwrap
 
+st.set_page_config(page_icon="Assets/metro-atl-speaks.svg")
+
 # Cache data loading for better performance
 @st.cache_data
 def load_data():
@@ -1155,7 +1157,7 @@ demo_grp_order = {
     "Gender": ["Female", "Male"],
     "Years in Metro Atl": ["5 years or less", "6-10 years", "11-20 years", "21-30 years", "over 30 years"],
     "Education": ["Less than high school", "High school or GED", "Some college or technical school", "BA or BS", "Graduate or Professional Degree"],
-    "Income": ["Less than $25K", "$25K-60K", "$60K-$120K", "$120k-$250k", "Over $250k", "Refused"],
+    "Income": ["Less than $25K", "$25K-60K", "$60k-$120K", "$120k-$250k", "Over $250k", "Refused"],
     "Employment Status": ["Working full-time", "Working part-time", "Unemployed but seeking work", "Unemployed and not looking for work", "Retired"],
 }
 

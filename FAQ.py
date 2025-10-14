@@ -1,5 +1,7 @@
 import streamlit as st
 
+st.set_page_config(page_icon="Assets/metro-atl-speaks.svg")
+
 custom_css = """
 <style>
 .stMainBlockContainer {

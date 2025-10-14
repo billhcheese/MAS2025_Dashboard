@@ -3,6 +3,8 @@ import altair as alt
 import streamlit as st
 import textwrap
 
+st.set_page_config(page_icon="Assets/metro-atl-speaks.svg")
+
 # Cache data loading for better performance
 @st.cache_data
 def load_data():
@@ -54,6 +56,24 @@ with col_title:
         <p>Metro Summary Dashboard</p>
     </div>
     """, unsafe_allow_html=True)
+
+st.markdown("""
+    <div style='line-height: 1.5;'>
+        <p>
+            <span style='color: #F15B29; font-size: 22px; font-weight:Bold ;'>Explore your Community's Opinions in 2025!</span>
+            <span style='color: #29ABE2; font-size: 20px; font-weight:Semibold ;'>Housing Affordability is the top issue for Metro Atlanta
+             Residents. Traffic concern came in second with the rest of the concerns trailing.</span> 
+            <span style='color: #59595b; font-size: 15px; font-weight:400 ;'>
+                The Metro Atlanta Speaks Survey is the largest survey
+                of perceptions and attitudes in the Atlanta region that offer a statistically valid snapshot of residents
+                across the Atlanta area on various topics. The Atlanta Regional Commission(ARC) conducts this in collaboration with
+                community partners like Kennesaw State University's A.L. Burruss Institute of Public Service & Research. Find out more about
+                the MAS survey in the <a href="https://mas2025dashboard.streamlit.app/FAQ" target="_self">FAQ</a>.</span>
+            </span>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # Get unique questions from the data
 questions = df["q_short"].unique().tolist()
