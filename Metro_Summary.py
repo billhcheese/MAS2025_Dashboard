@@ -39,11 +39,56 @@ custom_css = """
     font-size: 10px; /* Adjust font size as needed */
     padding: 15px; /* Adjust padding for button size */
 }
+
+/* Floating scroll down icon */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #2364a0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.scroll-indicator:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-indicator::before {
+    content: "↓";
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.scroll-indicator.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Remove bouncing animation - keeping it static */
 </style>
 """
 
 # Inject the custom CSS
 st.markdown(custom_css, unsafe_allow_html=True)
+
+# Add floating scroll indicator (visual only)
+st.markdown("""
+<div class="scroll-indicator"></div>
+""", unsafe_allow_html=True)
+
 #st.logo("Assets/logo-with-text.svg",size="large")
 
 # Create title with logo
@@ -1116,7 +1161,27 @@ chart_configs = {
     }
 }
 
-selected_question = question_map[st.selectbox("Choose a question", questions)]
+# Create display options with time trend indicators
+display_options = []
+for question in questions:
+    question_key = question_map[question]
+    trend_status = question_hist.get(question_key, 0)
+    
+    if trend_status == 1:
+        display_text = f"{question} (Trend Available)"
+    else:
+        display_text = f"{question} (No Trend)"
+    
+    display_options.append(display_text)
+
+# Create mapping from display text back to original question
+display_to_question = dict(zip(display_options, questions))
+
+selected_display = st.selectbox(
+    "Choose a question from the MAS 2025 Survey", 
+    display_options, 
+    help="Select a question to display, (No Trend) questions do not have year-over-year trend data whereas (Trend Available) questions do if you scroll down")
+selected_question = question_map[display_to_question[selected_display]]
 
 # Filter data for selected question
 df_question = df[df["question"] == selected_question].copy()
@@ -1129,7 +1194,7 @@ if "survey year" in df_question.columns:
         "Select Survey Year", 
         options=year_options, 
         index=0, #default to 2025
-        help="Select which survey year to include in county breakdown analysis",
+        help="Select which MAS survey year to use for the graph",
         horizontal=True)
 
     # Apply year filter for non-trend analysis

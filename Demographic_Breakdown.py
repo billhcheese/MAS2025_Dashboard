@@ -1097,7 +1097,27 @@ chart_configs = {
     }
 }
 
-selected_question = question_map[st.selectbox("Choose a question", questions)]
+# Create display options with time trend indicators
+display_options = []
+for question in questions:
+    question_key = question_map[question]
+    trend_status = question_hist.get(question_key, 0)
+    
+    if trend_status == 1:
+        display_text = f"{question} (Trend Available)"
+    else:
+        display_text = f"{question} (No Trend)"
+    
+    display_options.append(display_text)
+
+# Create mapping from display text back to original question
+display_to_question = dict(zip(display_options, questions))
+
+selected_display = st.selectbox(
+    "Choose a question from the MAS 2025 Survey", 
+    display_options, 
+    help="Select a question to display, (No Trend) questions do not have year-over-year trend data whereas (Trend Available) questions do if you scroll down")
+selected_question = question_map[display_to_question[selected_display]]
 
 # Filter data for selected question
 df_question = df[df["question"] == selected_question].copy()
@@ -1110,7 +1130,7 @@ if "survey year" in df_question.columns:
         "Select Survey Year", 
         options=year_options, 
         index=0, #default to 2025
-        help="Select which survey year to include in county breakdown analysis",
+        help="Select which MAS survey year to use for the graph",
         horizontal=True)
     
     # Apply year filter for county breakdown
@@ -1122,7 +1142,13 @@ else:
 
 # Demographic selection for historical analysis
 demographic_options = ["County", "Race", "Latinx or Hispanic", "Gender", "Age", "Years in Metro Atl", "Education", "Income", "Homeownership", "Employment Status", "Remote Worker Status"]
-selected_demographic = st.segmented_control("Select Demographic", options = demographic_options, default = "County")
+selected_demographic = st.segmented_control(
+    "Select Demographic", 
+    options = demographic_options, 
+    default = "County",
+    help="Select demographic type to breakdown results by")
+placeholder_selected_demo_value = st.empty()
+
 #selected_demographic = st.selectbox("Select demographic for historical analysis", demographic_options)
 
 # Get the actual column name for the selected demographic
@@ -1582,7 +1608,8 @@ if len(df_year_filtered) > 0:
         st.info("📊 The Historic Response Trends chart shows trends across ALL survey years, regardless of the year filter above.")
         
     elif question_hist[selected_question] == 1 and selected_demo_value == None:
-        st.markdown("💡 **Tip:** Click on any bar in the chart above to see historical trends for that demographic group")
+        with placeholder_selected_demo_value.container():
+            st.markdown("💡 **Tip:** *Click on any bar in the stacked bar chart below and Scroll Down to see historical trends for that demographic group which will pop up in a lower chart*")
     else:
         st.info("Selected question does not have historical data or has no valid time series data.")
    
