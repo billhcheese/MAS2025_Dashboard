@@ -3,8 +3,14 @@ import altair as alt
 import streamlit as st
 import textwrap
 
+# Cache data loading for better performance
+@st.cache_data
+def load_data():
+    """Load the MAS Dashboard data with caching."""
+    return pd.read_csv("Data/MAS_Dashboard_Records_2025_Updated.csv")
+
 # Load data
-df = pd.read_csv("Data/MAS_Dashboard_Records_2025_Updated.csv")
+df = load_data()
 
 custom_css = """
 <style>
