@@ -5,7 +5,7 @@ import textwrap
 import streamlit.components.v1 as components
 
 st.set_page_config(page_icon="Assets/metro-atl-speaks.svg")
-st.set_page_config(initial_sidebar_state="expanded")
+st.set_page_config(initial_sidebar_state="collapsed")
 
 # Cache data loading for better performance
 @st.cache_data
