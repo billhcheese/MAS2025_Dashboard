@@ -167,10 +167,8 @@ st.markdown("""
                 of perceptions and attitudes in the Atlanta region that offer a statistically representative snapshot of residents
                 across the Atlanta area on various topics. The Atlanta Regional Commission(ARC) conducts this in collaboration with
                 community partners like Kennesaw State University's A.L. Burruss Institute of Public Service & Research. Find out more about
-                the MAS survey in the <a href="https://mas2025dashboard.streamlit.app/FAQ" target="_self">FAQ</a>.</span>
-            <span style='color: #59595b; font-size: 15px; font-weight:600 ;'>
-            This dashboard is best viewed on a desktop computer. Mobile view is available via a checkbox in the sidebar.
-            </span>
+                the MAS survey in the <a href="https://mas2025dashboard.streamlit.app/FAQ" target="_self">FAQ</a>.
+                This dashboard is best viewed on a desktop computer. Mobile view is available via a checkbox in the sidebar.</span>
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1330,6 +1328,7 @@ if st.session_state.is_mobile:
             },
             height=400
         )
+        .interactive()
     )
     
     # Create labels for vertical bars
@@ -1371,6 +1370,7 @@ else:
                 "color": "#59595b"
             }
         )
+        .interactive()
     )
     
     # Create labels for horizontal bars
@@ -1396,6 +1396,13 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 st.altair_chart(response_chart + response_chart_label, use_container_width=True)
 st.caption("Note: Remaining percentages are either Don't Know or Not Available.")
+if st.session_state.is_mobile is False:
+    st.markdown("""
+                <span style='color: #59595b; font-size: 15px; font-weight:600 ;'>
+                *Chart displaying funky? Mobile view is available via a checkbox in the expandable sidebar.
+                </span>
+        """, unsafe_allow_html=True)
+
 
 st.markdown("---")  # Add a separator line
 # --- Year-over-Year Trends ---
@@ -1502,6 +1509,7 @@ if "survey year" in df_question.columns and question_hist[selected_question] == 
         .properties(
             title="Response Trends Over Time (All Years)"
         )
+        .interactive()
     )
     
     st.markdown(f"""
