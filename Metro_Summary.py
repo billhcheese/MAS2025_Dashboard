@@ -1304,7 +1304,16 @@ else:
 
 # Create responsive bar chart based on detected screen size
 if st.session_state.is_mobile:
-    # Vertical bar chart for mobile devices
+    # Vertical bar chart for mobile devices with legend below
+    legend_config = alt.Legend(
+        orient="bottom",
+        direction="horizontal",
+        titleOrient="top",
+        columns=2,
+        labelLimit=200,
+        title="Response"
+    )
+    
     response_chart = (
         alt.Chart(response_summary.round(2))
         .mark_bar()
@@ -1312,7 +1321,7 @@ if st.session_state.is_mobile:
             x=alt.X("response_display:N", title="Response", sort=sort_order,
                     axis=alt.Axis(labelAngle=-45, labelLimit=0)),
             y=alt.Y("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
-            color=alt.Color("response:N", legend=None, scale=color_scale),
+            color=alt.Color("response_display:N", legend=legend_config, scale=color_scale, sort=sort_order),
             tooltip=[
                 alt.Tooltip("response_display", title="Response"),
                 alt.Tooltip("percent", format=".0%", title="Percentage")
@@ -1326,9 +1335,8 @@ if st.session_state.is_mobile:
                 "fontWeight": 400,
                 "color": "#59595b"
             },
-            height=400
+            height=500
         )
-        .interactive()
     )
     
     # Create labels for vertical bars
@@ -1370,7 +1378,6 @@ else:
                 "color": "#59595b"
             }
         )
-        .interactive()
     )
     
     # Create labels for horizontal bars
@@ -1509,7 +1516,6 @@ if "survey year" in df_question.columns and question_hist[selected_question] == 
         .properties(
             title="Response Trends Over Time (All Years)"
         )
-        .interactive()
     )
     
     st.markdown(f"""

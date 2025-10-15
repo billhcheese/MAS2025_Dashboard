@@ -1527,7 +1527,6 @@ if len(df_year_filtered) > 0:
             .configure_title(
                 subtitlePadding=10
             )
-            .interactive()
         )
         
         # Add text labels for percentages (not supported by streamlit for now)
@@ -1712,7 +1711,6 @@ if len(df_year_filtered) > 0:
                 title=f"Historic Response Trends: {selected_demo_value} ({selected_demographic.title()})",
                 height=400
             )
-            .interactive()
         )
         
         st.altair_chart(historical_chart, use_container_width=True)
