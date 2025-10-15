@@ -2,6 +2,7 @@ import pandas as pd
 import altair as alt
 import streamlit as st
 import textwrap
+import streamlit.components.v1 as components
 
 st.set_page_config(page_icon="Assets/metro-atl-speaks.svg")
 
@@ -32,11 +33,27 @@ custom_css = """
 .stAppHeader { /* This class targets the top navigation container */
     background-color: #f9f9f9;
     min-height: 50px; /* Adjust height as needed */
-    padding-top: 10px; /* Add padding for vertical spacing */
-    padding-bottom: 10px;
+    padding-top: 20px; /* Add padding for vertical spacing */
+    padding-bottom: 20px;
 }
+
+/* Navigation menu items - comprehensive targeting */
+.rc-overflow-item,
+[data-testid="stHeader"] .rc-overflow-item,
+.stAppHeader .rc-overflow-item,
+header .rc-overflow-item,
+.stApp > header .rc-overflow-item,
+.stAppHeader *,
+[data-testid="stHeader"] *,
+header *,
+.stApp > header * {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    
+}
+
 .rc-overflow-item { /* This class targets the individual navigation items */
-    font-size: 10px; /* Adjust font size as needed */
+    font-size: 20px; /* Adjust font size as needed */
     padding: 15px; /* Adjust padding for button size */
 }
 
@@ -59,22 +76,11 @@ custom_css = """
     opacity: 0.8;
 }
 
-.scroll-indicator:hover {
-    opacity: 1;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
 .scroll-indicator::before {
     content: "↓";
     color: white;
     font-size: 24px;
     font-weight: bold;
-}
-
-.scroll-indicator.hidden {
-    opacity: 0;
-    pointer-events: none;
 }
 
 /* Remove bouncing animation - keeping it static */
@@ -84,12 +90,60 @@ custom_css = """
 # Inject the custom CSS
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# Add floating scroll indicator (visual only)
+# Add floating scroll indicator (visual only) and screen width detector
+
+
 st.markdown("""
 <div class="scroll-indicator"></div>
 """, unsafe_allow_html=True)
 
-#st.logo("Assets/logo-with-text.svg",size="large")
+# Log screen info to console for debugging
+# components.html("""
+# <!DOCTYPE html>
+# <html>
+# <head>
+#     <script>
+#         function logScreenInfo() {
+#             const width = window.parent.innerWidth || window.innerWidth;
+#             const height = window.parent.innerHeight || window.innerHeight;
+#             const ratio = window.devicePixelRatio || 1;
+            
+#             console.log('╔════════════════════════════╗');
+#             console.log('║    SCREEN INFORMATION      ║');
+#             console.log('╠════════════════════════════╣');
+#             console.log('║ Width:  ' + width + 'px');
+#             console.log('║ Height: ' + height + 'px');
+#             console.log('║ Ratio:  ' + ratio);
+#             console.log('╚════════════════════════════╝');
+#         }
+        
+#         // Log immediately
+#         logScreenInfo();
+        
+#         // Log on resize
+#         window.parent.addEventListener('resize', logScreenInfo);
+#     </script>
+# </head>
+# <body></body>
+# </html>
+# """, height=0)
+
+st.logo("Assets/arc-logo-black-trans.png",size="large")
+
+# Initialize session state for mobile view if not exists
+if 'is_mobile' not in st.session_state:
+    st.session_state.is_mobile = False
+
+# Sidebar - Mobile view toggle
+st.sidebar.markdown("### 📱 Display Options")
+st.session_state.is_mobile = st.sidebar.checkbox("Use Mobile View (Vertical Charts)", 
+                                                   value=st.session_state.is_mobile,
+                                                   help="Toggle this to switch between horizontal (desktop) and vertical (mobile) chart layouts")
+
+if st.session_state.is_mobile:
+    st.sidebar.info("📊 Charts displayed vertically")
+else:
+    st.sidebar.info("🖥️ Charts displayed horizontally")
 
 # Create title with logo
 col_logo, col_title = st.columns([1, 4])
@@ -110,15 +164,16 @@ st.markdown("""
              Residents. Traffic concern came in second with the rest of the concerns trailing.</span> 
             <span style='color: #59595b; font-size: 15px; font-weight:400 ;'>
                 The Metro Atlanta Speaks Survey is the largest survey
-                of perceptions and attitudes in the Atlanta region that offer a statistically valid snapshot of residents
+                of perceptions and attitudes in the Atlanta region that offer a statistically representative snapshot of residents
                 across the Atlanta area on various topics. The Atlanta Regional Commission(ARC) conducts this in collaboration with
                 community partners like Kennesaw State University's A.L. Burruss Institute of Public Service & Research. Find out more about
                 the MAS survey in the <a href="https://mas2025dashboard.streamlit.app/FAQ" target="_self">FAQ</a>.</span>
+            <span style='color: #59595b; font-size: 15px; font-weight:600 ;'>
+            This dashboard is best viewed on a desktop computer. Mobile view is available via a checkbox in the sidebar.
             </span>
         </p>
     </div>
     """, unsafe_allow_html=True)
-
 
 # Get unique questions from the data
 questions = df["q_short"].unique().tolist()
@@ -1249,46 +1304,90 @@ if "custom_colors" in config:
 else:
     color_scale = alt.Scale(scheme="category20")
 
-# Create bar chart
-response_chart = (
-    alt.Chart(response_summary.round(2))
-    .mark_bar()
-    .encode(
-        x=alt.X("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
-        y=alt.Y("response_display:N", title="Response", sort=sort_order,
-                axis=alt.Axis(labelLimit=0)),  # Remove Y-axis label truncation
-        color=alt.Color("response:N", legend=None, scale=color_scale),
-        tooltip=[
-            alt.Tooltip("response_display", title="Response"),
-            alt.Tooltip("percent", format=".0%", title="Percentage")
-        ]
+# Create responsive bar chart based on detected screen size
+if st.session_state.is_mobile:
+    # Vertical bar chart for mobile devices
+    response_chart = (
+        alt.Chart(response_summary.round(2))
+        .mark_bar()
+        .encode(
+            x=alt.X("response_display:N", title="Response", sort=sort_order,
+                    axis=alt.Axis(labelAngle=-45, labelLimit=0)),
+            y=alt.Y("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
+            color=alt.Color("response:N", legend=None, scale=color_scale),
+            tooltip=[
+                alt.Tooltip("response_display", title="Response"),
+                alt.Tooltip("percent", format=".0%", title="Percentage")
+            ]
+        )
+        .properties(
+            title={
+                "text": textwrap.wrap(f"{df_filtered['q_verb'].iloc[0] if 'q_verb' in df_filtered.columns else selected_question}", width=50),
+                "fontSize": 16,
+                "fontStyle": "italic",
+                "fontWeight": 400,
+                "color": "#59595b"
+            },
+            height=400
+        )
     )
-    .properties(
-        title={
-            "text": textwrap.wrap(f"{df_filtered['q_verb'].iloc[0] if 'q_verb' in df_filtered.columns else selected_question}", width=130),
-            "fontSize": 18,
-            "fontStyle": "italic",
-            "fontWeight": 400,
-            "color": "#59595b"
-        }
+    
+    # Create labels for vertical bars
+    response_chart_label = (
+        alt.Chart(response_summary.round(2))
+        .mark_text(
+            align="center",
+            baseline="bottom",
+            dy=-3  # Nudges text above the bar
+        )
+        .encode(
+            x=alt.X("response_display:N", title="Response", sort=sort_order),
+            y=alt.Y("percent:Q", title="Percentage"),
+            color=alt.Color("response:N", legend=None, scale=color_scale),
+            text=alt.Text("percent:Q", format=".0%")
+        )
     )
-)
-
-# Create labels
-response_chart_label = (
-    alt.Chart(response_summary.round(2))
-    .mark_text(
-        align="left",
-        baseline="middle",
-        dx=3  # Nudges text to the right
+else:
+    # Horizontal bar chart for desktop
+    response_chart = (
+        alt.Chart(response_summary.round(2))
+        .mark_bar()
+        .encode(
+            x=alt.X("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
+            y=alt.Y("response_display:N", title="Response", sort=sort_order,
+                    axis=alt.Axis(labelLimit=0)),  # Remove Y-axis label truncation
+            color=alt.Color("response:N", legend=None, scale=color_scale),
+            tooltip=[
+                alt.Tooltip("response_display", title="Response"),
+                alt.Tooltip("percent", format=".0%", title="Percentage")
+            ]
+        )
+        .properties(
+            title={
+                "text": textwrap.wrap(f"{df_filtered['q_verb'].iloc[0] if 'q_verb' in df_filtered.columns else selected_question}", width=130),
+                "fontSize": 18,
+                "fontStyle": "italic",
+                "fontWeight": 400,
+                "color": "#59595b"
+            }
+        )
     )
-    .encode(
-        x=alt.X("percent:Q", title="Percentage"),
-        y=alt.Y("response_display:N", title="Response", sort=sort_order),
-        color=alt.Color("response:N", legend=None, scale=color_scale),
-        text=alt.Text("percent:Q", format=".0%")
+    
+    # Create labels for horizontal bars
+    response_chart_label = (
+        alt.Chart(response_summary.round(2))
+        .mark_text(
+            align="left",
+            baseline="middle",
+            dx=3  # Nudges text to the right
+        )
+        .encode(
+            x=alt.X("percent:Q", title="Percentage"),
+            y=alt.Y("response_display:N", title="Response", sort=sort_order),
+            color=alt.Color("response:N", legend=None, scale=color_scale),
+            text=alt.Text("percent:Q", format=".0%")
+        )
     )
-)
 
 st.markdown(f"""
     <div style='color: #2364a0; font-size: 27px; font-weight: Bold;'>
@@ -1360,6 +1459,28 @@ if "survey year" in df_question.columns and question_hist[selected_question] == 
     
     year_trend["survey year"] = year_trend["survey year"].astype(str)
     
+    # Determine the start year dynamically from the data
+    min_year = year_trend["survey year"].min()
+    start_date = f"{min_year}-01-01"
+    end_date = "2025-12-31"
+    
+    # Configure legend position based on mobile/desktop view
+    if st.session_state.is_mobile:
+        # Mobile view: legend below the chart
+        legend_config = alt.Legend(
+            orient="bottom",
+            direction="horizontal",
+            titleOrient="top",
+            columns=2,  # Show legend items in 2 columns for better mobile layout
+            labelLimit=200
+        )
+    else:
+        # Desktop view: legend on the right (default)
+        legend_config = alt.Legend(
+            orient="right",
+            titleOrient="top"
+        )
+    
     trend_chart = (
         alt.Chart(year_trend.round(2))
         .mark_line(point=True)
@@ -1368,10 +1489,10 @@ if "survey year" in df_question.columns and question_hist[selected_question] == 
                 "survey year:T", 
                 title="Survey Year", 
                 axis=alt.Axis(tickCount="year"),
-                scale=alt.Scale(domain=['2016-01-01', '2025-12-31']),
+                scale=alt.Scale(domain=[start_date, end_date]),
             ),
             y=alt.Y("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
-            color=alt.Color("response_display:N", title="Response", scale=color_scale),
+            color=alt.Color("response_display:N", title="Response", scale=color_scale, legend=legend_config),
             tooltip=[
                 alt.Tooltip("survey year:T", format="%Y", title="Survey Year", timeUnit='utcyear'), 
                 alt.Tooltip("response_display", title="Response"), 
@@ -1398,14 +1519,15 @@ else:
         <p>Year-over-Year Trends</p>
     </div>
     """, unsafe_allow_html=True)
-    st.info("📊 There is no current and viable year-over-year trend data for this question.")
+    st.info("📊 There is no recent and viable year-over-year trend data for this question.")
 
 # Logo display
 st.markdown("---")  # Add a separator line
 
-st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the Atlanta Regional Commission Partnership")
+st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the ARC Research & Innovation")
 
-col1, col2 = st.columns([1, 1], gap="large")
+# Create centered columns with better alignment
+col1, col2, col3 = st.columns([1, 1, 1], gap="large")
 
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
@@ -1419,3 +1541,10 @@ with col2:
     st.link_button("Visit Atlanta Regional Commission", "https://atlantaregional.org/")
     st.markdown("</div>", unsafe_allow_html=True)
 
+with col3:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<p><span style='color: #2364a0; font-size: 15px; font-weight: Bold;'>More data from ARC Research & Innovation</span></p>", unsafe_allow_html=True)
+    st.link_button("Visit ARC Research & Innovation", "https://atlantaregional.org/what-we-do/research-and-data/")
+    st.link_button("Visit ARC Open Data", "https://opendata.atlantaregional.com/")
+    st.link_button("Visit ARC 33°n Blog", "https://33n.atlantaregional.com/")
+    st.markdown("</div>", unsafe_allow_html=True)

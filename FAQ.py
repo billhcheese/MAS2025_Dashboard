@@ -19,19 +19,64 @@ custom_css = """
 .stAppHeader { /* This class targets the top navigation container */
     background-color: #f9f9f9;
     min-height: 50px; /* Adjust height as needed */
-    padding-top: 10px; /* Add padding for vertical spacing */
-    padding-bottom: 10px;
+    padding-top: 20px; /* Add padding for vertical spacing */
+    padding-bottom: 20px;
 }
+
+/* Navigation menu items - comprehensive targeting */
+.rc-overflow-item,
+[data-testid="stHeader"] .rc-overflow-item,
+.stAppHeader .rc-overflow-item,
+header .rc-overflow-item,
+.stApp > header .rc-overflow-item,
+.stAppHeader *,
+[data-testid="stHeader"] *,
+header *,
+.stApp > header * {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    
+}
+
 .rc-overflow-item { /* This class targets the individual navigation items */
-    font-size: 10px; /* Adjust font size as needed */
+    font-size: 20px; /* Adjust font size as needed */
     padding: 15px; /* Adjust padding for button size */
 }
+
+/* Floating scroll down icon */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #2364a0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.scroll-indicator::before {
+    content: "↓";
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Remove bouncing animation - keeping it static */
 </style>
 """
 
 # Inject the custom CSS
 st.markdown(custom_css, unsafe_allow_html=True)
-#st.logo("Assets/metro-atl-speaks.svg",size="large")
+st.logo("Assets/arc-logo-black-trans.png",size="large")
+
 # Create title with logo
 col_logo, col_title = st.columns([1, 4])
 with col_logo:
@@ -49,7 +94,7 @@ with st.expander("What is the Metro Atlanta Speaks Survey?", expanded=True):
         of Public Service & Research, has conducted the Metro Atlanta
         Speaks Survey (MAS), since 2013, to take the pulse of metro Atlanta residents and inform the region's planning and
         decision-making. The survey, now in its 11th year, is the largest survey of perceptions and attitudes in the Atlanta
-        region. MAS offers a statistically valid snapshot of residents across the Atlanta area on various topics including
+        region. MAS offers a statistically representative snapshot of residents across the Atlanta area on various topics including
         transportation, the economy, workforce development, housing and affordability, quality of life, and other
         emerging regional issues. Extensive demographic crosstabs, at the regional level, enhance the value of the results for
         narrowing in on differences of opinion.
@@ -72,7 +117,7 @@ with st.expander("I have more questions that are not on this FAQ, what should I 
 with st.expander("Why are some demographic groups not shown in the dashboard?"):
     st.write("""
         Some demographic groups are difficult to survey to a significant level of confidence because they are small percentages of the current population,
-         and we do not have enough random samples to be confident in the accuracy of the results. For example, we collected results from people who identify with
+         and we do not have enough random samples to be confident in the accuracy of the results. We collected results from people who identify with
         gender in a different way other than Male or Female. While, these responses influence the survey's tabulations, the sample count was too low to view this groups
         responses through that specific gender demographic group tabulation. You can see the full list of surveyed groups in the report at 
         https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey-report/ even though we may not display them in the dashboard.
@@ -108,7 +153,7 @@ with st.expander("What area(s) is (are) cover by the MAS survey?"):
         Commission area. As such, for the last five years, MAS has covered the eleven counties of ARC along with the City of
         Atlanta. For five of the earlier years of the survey, the ten ARC counties (of that time) plus three added counties were
         covered, to meet the needs of a client sponsor. In the first year for MAS (2013), ten counties were covered, with
-        results only valid regionally.
+        results only representative regionally.
         """)
 
 with st.expander("Why do some graphs not include certain years, answers, or questions?"):
@@ -118,7 +163,7 @@ with st.expander("Why do some graphs not include certain years, answers, or ques
         For example, the MAS survey was not conducted in 2022.
         """)
 
-with st.expander("What is the level of statistical significance of they survey results?"):
+with st.expander("What is the level of statistical significance of the survey results?"):
     st.write("""
         Again, there is variation. At the regional level (whatever the overall region has been, in any given year), results have
         also had margins of error (MOEs) of under 2%, usually under 1.5%, meaning that the "true" result is only a maximum
@@ -131,6 +176,6 @@ with st.expander("How many people are surveyed (i.e. what is the N)?"):
     st.write("""
         The N has changed with the coverage and the methodology. In the first year of the survey (2013), with regional-only
         significance, 2,200 people were surveyed. Since then, the N has varied from about 4,000 to about 5,500. The number
-        surveyed by county has varied between 200 and 500. Fulton has been surveyed above 600 in various years due 
+        surveyed by jurisdiction has varied between 200 and 500. Fulton has been surveyed above 600 in various years due 
         to oversampling for reporting on the City of Atlanta sub geography.
         """)

@@ -17,7 +17,7 @@ df = load_data()
 custom_css = """
 <style>
 .stMainBlockContainer {
-            max-width:75rem;
+            max-width:65rem;
         }
 .stSelectbox div[data-baseweb="select"] > div:first-child {
     border: 2px solid #808080; /* Example: 2px solid green border */
@@ -31,19 +31,79 @@ custom_css = """
 .stAppHeader { /* This class targets the top navigation container */
     background-color: #f9f9f9;
     min-height: 50px; /* Adjust height as needed */
-    padding-top: 10px; /* Add padding for vertical spacing */
-    padding-bottom: 10px;
+    padding-top: 20px; /* Add padding for vertical spacing */
+    padding-bottom: 20px;
 }
+
+/* Navigation menu items - comprehensive targeting */
+.rc-overflow-item,
+[data-testid="stHeader"] .rc-overflow-item,
+.stAppHeader .rc-overflow-item,
+header .rc-overflow-item,
+.stApp > header .rc-overflow-item,
+.stAppHeader *,
+[data-testid="stHeader"] *,
+header *,
+.stApp > header * {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    
+}
+
 .rc-overflow-item { /* This class targets the individual navigation items */
-    font-size: 10px; /* Adjust font size as needed */
+    font-size: 20px; /* Adjust font size as needed */
     padding: 15px; /* Adjust padding for button size */
 }
+
+/* Floating scroll down icon */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #2364a0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.scroll-indicator::before {
+    content: "↓";
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Remove bouncing animation - keeping it static */
 </style>
 """
 
 # Inject the custom CSS
 st.markdown(custom_css, unsafe_allow_html=True)
-#st.logo("Assets/metro-atl-speaks.svg",size="large")
+st.logo("Assets/arc-logo-black-trans.png",size="large")
+
+# Initialize session state for mobile view if not exists
+if 'is_mobile' not in st.session_state:
+    st.session_state.is_mobile = False
+
+# Sidebar - Mobile view toggle
+st.sidebar.markdown("### 📱 Display Options")
+st.session_state.is_mobile = st.sidebar.checkbox("Use Mobile View (Vertical Charts)", 
+                                                   value=st.session_state.is_mobile,
+                                                   help="Toggle this to switch between horizontal (desktop) and vertical (mobile) chart layouts")
+
+if st.session_state.is_mobile:
+    st.sidebar.info("📊 Charts displayed vertically")
+else:
+    st.sidebar.info("🖥️ Charts displayed horizontally")
+
 # Create title with logo
 col_logo, col_title = st.columns([1, 4])
 with col_logo:
@@ -55,6 +115,15 @@ with col_title:
     </div>
     """, unsafe_allow_html=True)
 
+st.markdown("""
+    <div style='line-height: 1.5;'>
+        <p>
+            <span style='color: #59595b; font-size: 15px; font-weight:600 ;'>
+            *Mobile view is available via a checkbox in the sidebar.
+            </span>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Get unique questions from the data
 questions = df["q_short"].unique().tolist()
@@ -1398,11 +1467,33 @@ if len(df_year_filtered) > 0:
         else:
             demo_sort_order = None
             
-        stacked_chart = alt.Chart(county_crosstab.round(2)).encode(
-            x=alt.X("percent:Q", title="Percentage", axis=alt.Axis(format=".0%"), scale=alt.Scale(domain=[0, 1])),
-            y=alt.Y(f"{chart_display_column}:N", title=selected_demographic,
-                    axis=alt.Axis(labelLimit=0), sort=demo_sort_order),
-          )  # Remove label truncation)
+        # Configure chart orientation based on mobile/desktop view
+        if st.session_state.is_mobile:
+            # Mobile view: Vertical stacked bars with legend below
+            stacked_chart = alt.Chart(county_crosstab.round(2)).encode(
+                x=alt.X(f"{chart_display_column}:N", title=selected_demographic,
+                        axis=alt.Axis(labelLimit=0, labelAngle=-45), sort=demo_sort_order),
+                y=alt.Y("percent:Q", title="Percentage", axis=alt.Axis(format=".0%"), scale=alt.Scale(domain=[0, 1])),
+            )
+            legend_config = alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                titleOrient="top",
+                columns=2,
+                labelLimit=200
+            )
+        else:
+            # Desktop view: Horizontal stacked bars with legend on right
+            stacked_chart = alt.Chart(county_crosstab.round(2)).encode(
+                x=alt.X("percent:Q", title="Percentage", axis=alt.Axis(format=".0%"), scale=alt.Scale(domain=[0, 1])),
+                y=alt.Y(f"{chart_display_column}:N", title=selected_demographic,
+                        axis=alt.Axis(labelLimit=0), sort=demo_sort_order),
+            )
+            legend_config = alt.Legend(
+                orient="right",
+                titleOrient="top"
+            )
+        
         #county_crosstab.to_csv("county_crosstab.csv")
         # Create selection for interactive chart
         selection = alt.selection_single(name="single", fields=[chart_column], empty="none")
@@ -1414,7 +1505,7 @@ if len(df_year_filtered) > 0:
                 #x=alt.X("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
                 #y=alt.Y(f"{chart_column}:N", title=selected_demographic,
                 #        axis=alt.Axis(labelLimit=0)),  # Remove label truncation
-                color=alt.Color(f"{response_column}:N", title="Response", scale=color_scale, sort=sort_order).legend(orient="right"),
+                color=alt.Color(f"{response_column}:N", title="Response", scale=color_scale, sort=sort_order, legend=legend_config),
                 order=alt.Order("order:Q") if "custom_order" in config else alt.Order("percent:Q", sort="descending"),
                 tooltip=[
                     alt.Tooltip(chart_display_column, title=selected_demographic),
@@ -1430,7 +1521,8 @@ if len(df_year_filtered) > 0:
                     "subtitle":f"Response by {selected_demographic} Demographic ({selected_year})",
                     "subtitleFontSize": 12,
                     "subtitleColor": "#666666"
-                }
+                },
+                height=600 if st.session_state.is_mobile else 400  # Taller chart for mobile view
             )
             .configure_title(
                 subtitlePadding=10
@@ -1580,6 +1672,23 @@ if len(df_year_filtered) > 0:
         start_date = f"{min_year}-01-01"
         end_date = "2025-12-31"
         
+        # Configure legend position based on mobile/desktop view
+        if st.session_state.is_mobile:
+            # Mobile view: legend below the chart
+            hist_legend_config = alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                titleOrient="top",
+                columns=2,
+                labelLimit=200
+            )
+        else:
+            # Desktop view: legend on the right (default)
+            hist_legend_config = alt.Legend(
+                orient="right",
+                titleOrient="top"
+            )
+        
         historical_chart = (
             alt.Chart(historical_trend.round(2))
             .mark_line(point=True, strokeWidth=3)
@@ -1591,7 +1700,7 @@ if len(df_year_filtered) > 0:
                     scale=alt.Scale(domain=[start_date, end_date]),
                 ),
                 y=alt.Y("percent:Q", title="Percentage", axis=alt.Axis(format=".0%")),
-                color=alt.Color("response_display:N", title="Response", scale=hist_color_scale),
+                color=alt.Color("response_display:N", title="Response", scale=hist_color_scale, legend=hist_legend_config),
                 tooltip=[
                     alt.Tooltip("survey year:T", format="%Y", title="Survey Year", timeUnit='utcyear'),
                     alt.Tooltip("response_display", title="Response"),
@@ -1618,21 +1727,27 @@ else:
 
 # Side-by-side logo display
 st.markdown("---")  # Add a separator line
-st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the Atlanta Regional Commission Partnership")
+st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the Atlanta Regional Commission")
 
 # Create centered columns with better alignment
-col1, col2 = st.columns([1, 1], gap="large")
+col1, col2, col3 = st.columns([1, 1, 1], gap="large")
 
 with col1:
-    # Display KSU Burruss Institute logo with clickable link
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     st.image("Assets/Fw_ltnUt_400x400.png", width=300, use_container_width=False)
     st.link_button("Visit KSU Burruss Institute", "https://www.kennesaw.edu/external-affairs/burruss-institute/index.php")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
-    # Display Atlanta Regional Commission logo with clickable link
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     st.image("Assets/logo-with-text.svg", width=200, use_container_width=False)
     st.link_button("Visit Atlanta Regional Commission", "https://atlantaregional.org/")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<p><span style='color: #2364a0; font-size: 15px; font-weight: Bold;'>More data from ARC Research & Innovation</span></p>", unsafe_allow_html=True)
+    st.link_button("Visit ARC Research & Innovation", "https://atlantaregional.org/what-we-do/research-and-data/")
+    st.link_button("Visit ARC Open Data", "https://opendata.atlantaregional.com/")
+    st.link_button("Visit ARC 33°n Blog", "https://33n.atlantaregional.com/")
     st.markdown("</div>", unsafe_allow_html=True)
