@@ -191,7 +191,7 @@ chart_configs = {
                 "Housing Affordability": "#FE6100",
                 "Economy": "#DC267F",
                 "Quality of Local Schools": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
         },
@@ -206,7 +206,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -221,7 +221,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -236,7 +236,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -251,7 +251,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -266,7 +266,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -281,7 +281,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -296,7 +296,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
@@ -311,7 +311,7 @@ chart_configs = {
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
                 "Public Education": "#9DA786",
-                "Public Health": "#785EF0",
+                "Public Health": "#425FA2",
                 "Other": "#AF1737"
                 }
             },
