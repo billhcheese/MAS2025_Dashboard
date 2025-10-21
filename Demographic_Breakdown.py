@@ -1249,14 +1249,31 @@ else:
 
 # Demographic selection for historical analysis
 demographic_options = ["Jurisdiction", "Race", "Hispanic", "Gender", "Age", "Yrs in Metro", "Education", "Income", "Homeownership", "Employment", "Work Setting"]
+
+# Initialize demographic selection state if not exists (use a separate variable for storage)
+if 'saved_demographic' not in st.session_state:
+    st.session_state.saved_demographic = "Jurisdiction"
+
+# Initialize widget key with saved value on first load
+if 'demo_segmented_control' not in st.session_state:
+    st.session_state.demo_segmented_control = st.session_state.saved_demographic
+
+# Callback to save selection
+def save_demographic_selection():
+    if st.session_state.demo_segmented_control is not None:
+        st.session_state.saved_demographic = st.session_state.demo_segmented_control
+
 selected_demographic = st.segmented_control(
     "Select Demographic", 
     options = demographic_options,
     selection_mode = "single",
-    default = "Jurisdiction",
+    key="demo_segmented_control",
+    on_change=save_demographic_selection,
     help="Select demographic type to breakdown results by")
-if selected_demographic == None: #if you click on the demographic again after selecting a value, it'll return None, so this set's it to Jurisdiction instead
-    selected_demographic = "Jurisdiction"
+
+# If user clicks on the same demographic again, it returns None, so use the saved value
+if selected_demographic == None:
+    selected_demographic = st.session_state.saved_demographic
 placeholder_selected_demo_value = st.empty()
 
 #selected_demographic = st.selectbox("Select demographic for historical analysis", demographic_options)
@@ -1782,7 +1799,7 @@ else:
 
 # Side-by-side logo display
 st.markdown("---")  # Add a separator line
-st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the Atlanta Regional Commission")
+st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and ARC Research & Innovation")
 
 # Create centered columns with better alignment
 col1, col2, col3 = st.columns([1, 1, 1], gap="large")

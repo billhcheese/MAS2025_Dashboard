@@ -183,7 +183,7 @@ with st.expander("How many people are surveyed (i.e. what is the N)?"):
 # Logo display
 st.markdown("---")  # Add a separator line
 
-st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the ARC Research & Innovation")
+st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and ARC Research & Innovation")
 
 # Create centered columns with better alignment
 col1, col2, col3 = st.columns([1, 1, 1], gap="large")
