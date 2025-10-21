@@ -166,7 +166,7 @@ st.markdown("""
             <span style='color: #59595b; font-size: 15px; font-weight:400 ;'>
                 The Metro Atlanta Speaks Survey is the largest survey
                 of perceptions and attitudes in the Atlanta region that offer a statistically representative snapshot of residents
-                across the Atlanta area on various topics. The Atlanta Regional Commission(ARC) conducts this in collaboration with
+                across the Atlanta area on various topics. The Atlanta Regional Commission (ARC) conducts this in collaboration with
                 community partners like Kennesaw State University's A.L. Burruss Institute of Public Service & Research. Find out more about
                 the MAS survey in the <a href="https://mas2025dashboard.streamlit.app/FAQ" target="_self">FAQ</a>.
                 This dashboard is best viewed on a desktop computer. Mobile view is available via a checkbox in the sidebar.</span>
@@ -1231,10 +1231,24 @@ for question in questions:
 # Create mapping from display text back to original question
 display_to_question = dict(zip(display_options, questions))
 
+# Initialize widget key with saved value if coming from another page
+if 'metro_question_selectbox' not in st.session_state:
+    if 'shared_question_text' in st.session_state and st.session_state.shared_question_text in display_options:
+        st.session_state.metro_question_selectbox = st.session_state.shared_question_text
+    else:
+        st.session_state.metro_question_selectbox = display_options[0]
+
+# Callback to sync selection to shared state
+def sync_question_selection():
+    st.session_state.shared_question_text = st.session_state.metro_question_selectbox
+
 selected_display = st.selectbox(
     "Choose a question from the MAS 2025 Survey", 
-    display_options, 
+    display_options,
+    key="metro_question_selectbox",
+    on_change=sync_question_selection,
     help="Select a question to display, (No Trend) questions do not have year-over-year trend data whereas (Trend Available) questions do if you scroll down")
+
 selected_question = question_map[display_to_question[selected_display]]
 
 # Filter data for selected question
@@ -1242,14 +1256,39 @@ df_question = df[df["question"] == selected_question].copy()
 
 # Year filter
 if "survey year" in df_question.columns:
-    available_years = sorted(df_question["survey year"].dropna().unique(), reverse=True)
-    year_options = [str(year) for year in available_years]
-    selected_year = st.radio(
-        "Select Survey Year", 
-        options=year_options, 
-        index=0, #default to 2025
-        help="Select which MAS survey year to use for the graph",
-        horizontal=True)
+    col1, col2 = st.columns([3,1], gap="small")
+    with col1:
+        available_years = sorted(df_question["survey year"].dropna().unique(), reverse=True)
+        year_options = [str(year) for year in available_years]
+        
+        # Initialize widget key with saved value if coming from another page
+        if 'metro_year_radio' not in st.session_state:
+            if 'shared_year_text' in st.session_state and st.session_state.shared_year_text in year_options:
+                st.session_state.metro_year_radio = st.session_state.shared_year_text
+            else:
+                st.session_state.metro_year_radio = year_options[0]
+        
+        # Callback to sync selection to shared state
+        def sync_year_selection():
+            st.session_state.shared_year_text = st.session_state.metro_year_radio
+        
+        selected_year = st.radio(
+            "Select Survey Year", 
+            options=year_options,
+            key="metro_year_radio",
+            on_change=sync_year_selection,
+            help="Select which MAS survey year to use for the graph",
+            horizontal=True)
+
+    with col2:
+        brkdwn_mode = st.pills(
+            "Select Summary Type", 
+            options=["Topline", "Detailed"],
+            default="Topline",
+            help="Display summary responses for the whole Metro Atlanta Region (Topline) or responses broken down by demographic (Detailed)"
+            )
+        if brkdwn_mode == "Detailed":
+            st.switch_page("Demographic_Breakdown.py")
 
     # Apply year filter for non-trend analysis
     df_filtered = df_question[df_question["survey year"] == int(selected_year)].copy()

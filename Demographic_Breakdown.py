@@ -17,7 +17,7 @@ df = load_data()
 custom_css = """
 <style>
 .stMainBlockContainer {
-            max-width:65rem;
+            max-width:68rem;
         }
 .stSelectbox div[data-baseweb="select"] > div:first-child {
     border: 2px solid #808080; /* Example: 2px solid green border */
@@ -1182,10 +1182,24 @@ for question in questions:
 # Create mapping from display text back to original question
 display_to_question = dict(zip(display_options, questions))
 
+# Initialize widget key with saved value if coming from another page
+if 'demo_question_selectbox' not in st.session_state:
+    if 'shared_question_text' in st.session_state and st.session_state.shared_question_text in display_options:
+        st.session_state.demo_question_selectbox = st.session_state.shared_question_text
+    else:
+        st.session_state.demo_question_selectbox = display_options[0]
+
+# Callback to sync selection to shared state
+def sync_question_selection():
+    st.session_state.shared_question_text = st.session_state.demo_question_selectbox
+
 selected_display = st.selectbox(
     "Choose a question from the MAS 2025 Survey", 
-    display_options, 
+    display_options,
+    key="demo_question_selectbox",
+    on_change=sync_question_selection,
     help="Select a question to display, (No Trend) questions do not have year-over-year trend data whereas (Trend Available) questions do if you scroll down")
+
 selected_question = question_map[display_to_question[selected_display]]
 
 # Filter data for selected question
@@ -1193,14 +1207,38 @@ df_question = df[df["question"] == selected_question].copy()
 
 # Year filter
 if "survey year" in df_question.columns:
-    available_years = sorted(df_question["survey year"].dropna().unique(), reverse=True)
-    year_options = [str(year) for year in available_years]
-    selected_year = st.radio(
-        "Select Survey Year", 
-        options=year_options, 
-        index=0, #default to 2025
-        help="Select which MAS survey year to use for the graph",
-        horizontal=True)
+    col1, col2 = st.columns([3,1], gap="small")
+    with col1:
+         available_years = sorted(df_question["survey year"].dropna().unique(), reverse=True)
+         year_options = [str(year) for year in available_years]
+         
+         # Initialize widget key with saved value if coming from another page
+         if 'demo_year_radio' not in st.session_state:
+             if 'shared_year_text' in st.session_state and st.session_state.shared_year_text in year_options:
+                 st.session_state.demo_year_radio = st.session_state.shared_year_text
+             else:
+                 st.session_state.demo_year_radio = year_options[0]
+         
+         # Callback to sync selection to shared state
+         def sync_year_selection():
+             st.session_state.shared_year_text = st.session_state.demo_year_radio
+         
+         selected_year = st.radio(
+             "Select Survey Year", 
+             options=year_options,
+             key="demo_year_radio",
+             on_change=sync_year_selection,
+             help="Select which MAS survey year to use for the graph",
+             horizontal=True)
+    with col2:
+        brkdwn_mode = st.pills(
+            "Select Summary Type", 
+            options=["Topline", "Detailed"], 
+            default="Detailed",
+            help="Display summary responses for the whole Metro Atlanta Region (Topline) or responses broken down by demographic (Detailed)"
+            )
+        if brkdwn_mode == "Topline":
+            st.switch_page("Metro_Summary.py")
     
     # Apply year filter for county breakdown
     df_year_filtered = df_question[df_question["survey year"] == int(selected_year)].copy()
@@ -1210,53 +1248,70 @@ else:
     selected_year = "2025"
 
 # Demographic selection for historical analysis
-demographic_options = ["County", "Race", "Latinx or Hispanic", "Gender", "Age", "Years in Metro Atl", "Education", "Income", "Homeownership", "Employment Status", "Remote Worker Status"]
+demographic_options = ["Jurisdiction", "Race", "Hispanic", "Gender", "Age", "Yrs in Metro", "Education", "Income", "Homeownership", "Employment", "Work Setting"]
 selected_demographic = st.segmented_control(
     "Select Demographic", 
-    options = demographic_options, 
-    default = "County",
+    options = demographic_options,
+    selection_mode = "single",
+    default = "Jurisdiction",
     help="Select demographic type to breakdown results by")
+if selected_demographic == None: #if you click on the demographic again after selecting a value, it'll return None, so this set's it to Jurisdiction instead
+    selected_demographic = "Jurisdiction"
 placeholder_selected_demo_value = st.empty()
 
 #selected_demographic = st.selectbox("Select demographic for historical analysis", demographic_options)
 
 # Get the actual column name for the selected demographic
 demo_col_map = {
-    "County": "county",
+    "Jurisdiction": "county",
     "Race": "black or white", 
-    "Latinx or Hispanic": "latino",
+    "Hispanic": "latino",
     "Gender": "gender",
     "Age": "age group more categories",
-    "Years in Metro Atl": "years in metro Atl categorized",
+    "Yrs in Metro": "years in metro Atl categorized",
     "Education": "education",
     "Income": "income",
     "Homeownership": "homeownership",
-    "Employment Status": "employment status",
-    "Remote Worker Status": "remote worker status"
+    "Employment": "employment status",
+    "Work Setting": "remote worker status"
 }
 demo_column = demo_col_map[selected_demographic]
 
 excluded_demographics = {
-    "Latinx or Hispanic": ["DK"],
+    "Hispanic": ["DK"],
     "Gender":["Identified with gender in different way","DK"],
     "Education": ["DK"],
     "Income": ["DK"],
     "Homeownership": ["DK"],
-    "Employment Status": ["Disabled","DK"],
-    "Remote Worker Status": ["DK"],
+    "Employment": ["Disabled","DK"],
+    "Work Setting": ["DK"],
 }
 
 demo_grp_order = {
     "Race": ["black", "white", "other"], 
-    "Latinx or Hispanic": ["Yes", "No"],
+    "Hispanic": ["Yes", "No"],
     "Gender": ["Female", "Male"],
-    "Years in Metro Atl": ["5 years or less", "6-10 years", "11-20 years", "21-30 years", "over 30 years"],
+    "Yrs in Metro": ["5 years or less", "6-10 years", "11-20 years", "21-30 years", "over 30 years"],
     "Education": ["Less than high school", "High school or GED", "Some college or technical school", "BA or BS", "Graduate or Professional Degree"],
     "Income": ["Less than $25K", "$25K-60K", "$60k-$120K", "$120k-$250k", "Over $250k", "Refused"],
-    "Employment Status": ["Working full-time", "Working part-time", "Unemployed but seeking work", "Unemployed and not looking for work", "Retired"],
+    "Employment": ["Working full-time", "Working part-time", "Unemployed but seeking work", "Unemployed and not looking for work", "Retired"],
 }
 
 demo_grp_rename = {
+    "Jurisdiction": {
+        "Atlanta": "City of Atlanta",
+        "Cherokee": "Cherokee County",
+        "Clayton": "Clayton County",
+        "Cobb": "Cobb County",
+        "DeKalb": "DeKalb County",
+        "Douglas": "Douglas County",
+        "Fayette": "Fayette County",
+        "Forsyth": "Forsyth County",
+        "Fulton": "Fulton County",
+        "Gwinnett": "Gwinnett County",
+        "Henry": "Henry County",
+        "Rockdale": "Rockdale County",
+    },
     "Race": {
         "black": "Black",
         "white": "White",
@@ -1270,7 +1325,7 @@ demo_grp_rename = {
         "55-64": "55-64 yrs",
         "65 and older": "65+ yrs",
     },
-    "Years in Metro Atl": {
+    "Yrs in Metro": {
         "5 years or less": "5 yrs or less",
         "6-10 years": "6-10 yrs",
         "11-20 years": "11-20 yrs",
@@ -1285,14 +1340,14 @@ demo_grp_rename = {
         "Over $250k": "$250k+",
         "Refused": "Refused",
     },
-    "Employment Status": {
+    "Employment": {
         "Working full-time": "Full-time",
         "Working part-time": "Part-time",
-        "Unemployed but seeking work": "Unemployed(seeking)",
-        "Unemployed and not looking for work": "Unemployed(not seeking)",
+        "Unemployed but seeking work": "Unemployed (seeking)",
+        "Unemployed and not looking for work": "Unemployed (not seeking)",
         "Retired": "Retired",
     },
-    "Remote Worker Status": {
+    "Work Setting": {
         "Work remotely all of the time": "Remote All of Time",
         "Work remotely some of the time and from a place of business": "Hybrid",
         "work at a place of business all the time": "Fully In-Person",
@@ -1303,7 +1358,7 @@ demo_grp_rename = {
 if demo_column in df_question.columns:
     demo_values = df_question[demo_column].dropna().unique().tolist()
     # Add Atlanta to county options if it's not already there
-    if selected_demographic == "County" and "Atlanta" not in demo_values:
+    if selected_demographic == "Jurisdiction" and "Atlanta" not in demo_values:
         demo_values.append("Atlanta")
 else:
     demo_values = []
@@ -1314,7 +1369,7 @@ if len(df_year_filtered) > 0:
     # --- Demographic Breakdown Chart ---
     
     if demo_column in df_year_filtered.columns:
-        # Create demographic breakdown with Atlanta only for County demographic
+        # Create demographic breakdown with Atlanta only for Jurisdiction demographic
         county_data = []
         
         # Process ALL demographic groups using countywt
@@ -1326,8 +1381,8 @@ if len(df_year_filtered) > 0:
             )
             county_data.append(regular_crosstab)
         
-        # Process Atlanta using atlwt ONLY if County is selected
-        if (selected_demographic == "County" and 
+        # Process Atlanta using atlwt ONLY if Jurisdiction is selected
+        if (selected_demographic == "Jurisdiction" and 
             "atlanta resident" in df_year_filtered.columns and 
             "atlwt" in df_year_filtered.columns):
             atlanta_data = df_year_filtered[df_year_filtered["atlanta resident"] == "Yes"].copy()
@@ -1592,7 +1647,7 @@ if len(df_year_filtered) > 0:
 
     if demo_column in df_question.columns and selected_demo_value:
         # Handle Atlanta as special case for county analysis
-        if selected_demographic == "County" and selected_demo_value == "Atlanta":
+        if selected_demographic == "Jurisdiction" and selected_demo_value == "Atlanta":
             # Filter for Atlanta residents using atlanta resident column
             if "atlanta resident" in df_question.columns and "atlwt" in df_question.columns:
                 df_demo_filtered = df_question[df_question["atlanta resident"] == "Yes"].copy()
