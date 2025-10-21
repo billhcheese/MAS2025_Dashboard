@@ -179,3 +179,31 @@ with st.expander("How many people are surveyed (i.e. what is the N)?"):
         surveyed by jurisdiction has varied between 200 and 500. Fulton has been surveyed above 600 in various years due 
         to oversampling for reporting on the City of Atlanta sub geography.
         """)
+
+# Logo display
+st.markdown("---")  # Add a separator line
+
+st.text("Survey Results Courtesy of the Kennesaw State University's A.L. Burruss Institute of Public Service & Research and the ARC Research & Innovation")
+
+# Create centered columns with better alignment
+col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+
+with col1:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.image("Assets/Fw_ltnUt_400x400.png", width=300, use_container_width=False)
+    st.link_button("Visit KSU Burruss Institute", "https://www.kennesaw.edu/external-affairs/burruss-institute/index.php")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.image("Assets/logo-with-text.svg", width=200, use_container_width=False)
+    st.link_button("Visit Atlanta Regional Commission", "https://atlantaregional.org/")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<p><span style='color: #2364a0; font-size: 15px; font-weight: Bold;'>More data from ARC Research & Innovation</span></p>", unsafe_allow_html=True)
+    st.link_button("Visit ARC Research & Innovation", "https://atlantaregional.org/what-we-do/research-and-data/")
+    st.link_button("Visit ARC Open Data", "https://opendata.atlantaregional.com/")
+    st.link_button("Visit ARC 33°n Blog", "https://33n.atlantaregional.com/")
+    st.markdown("</div>", unsafe_allow_html=True)
