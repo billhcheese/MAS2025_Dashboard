@@ -1632,7 +1632,7 @@ if len(df_year_filtered) > 0:
         chart_event = st.altair_chart(county_chart, use_container_width=True, on_select="rerun", selection_mode="single")
         
         # Add footer note below the chart
-        st.caption("Note: Remaining percentages are either Don't Know or Not Available.")
+        st.caption("Note: Remaining percentages are either Don't Know or Not Available. Percentages may vary slightly from those reported in other MAS products, go to FAQ for more details.")
         # Get selected demographic from chart interaction
         if chart_event and chart_event['selection']['single']:
             try:

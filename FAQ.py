@@ -90,14 +90,13 @@ with col_title:
 
 with st.expander("What is the Metro Atlanta Speaks Survey?", expanded=True):
     st.write("""
-        The Atlanta Regional Commission (ARC), in collaboration with Kennesaw State University’s A.L. Burruss Institute
-        of Public Service & Research, has conducted the Metro Atlanta
-        Speaks Survey (MAS), since 2013, to take the pulse of metro Atlanta residents and inform the region's planning and
-        decision-making. The survey, now in its 11th year, is the largest survey of perceptions and attitudes in the Atlanta
-        region. MAS offers a statistically representative snapshot of residents across the Atlanta area on various topics including
-        transportation, the economy, workforce development, housing and affordability, quality of life, and other
-        emerging regional issues. Extensive demographic crosstabs, at the regional level, enhance the value of the results for
-        narrowing in on differences of opinion.
+        Metro Atlanta Speaks (MAS) is a survey designed to offer a statistically representative snapshot of Atlanta region’s residents
+        , thus providing insights about where we stand as a region on important issues
+        . The Atlanta Regional Commission (ARC) has conducted the MAS since 2013
+        , and done so in collaboration with Kennesaw State University’s A.L. Burruss Institute of Public Service 
+        & Research most of those years. The MAS is the largest survey of perceptions and attitudes in the Atlanta region, and as such
+        , is able to offer county-level comparisons. MAS covers key topics such as transportation, the economy
+        , workforce development, housing and affordability, quality of life, and other emerging regional issues. 
         """)
 
 with st.expander("What is the methodology of the Metro Atlanta Speaks Survey?"):
@@ -105,22 +104,23 @@ with st.expander("What is the methodology of the Metro Atlanta Speaks Survey?"):
         For the first eight years of the survey, random-digit dial (RDD) was the method, with cellphone share (compared to
         landline) increasing each year. For the last five years, with technological change and also due to need to reduce costs,
         the survey became mixed mode, with an online component added to the RDD element. Find more details at the MAS
-        report on the website https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey-report/
+        report on the website https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/
         """)
 
 with st.expander("I have more questions that are not on this FAQ, what should I do?"):
     st.write("""
-        You can find more details about the MAS 2025 Survey at https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey-report/. 
+        You can find more details about the MAS 2025 Survey at https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/. 
         If you cannot find an answer to your question there, contact Bill Huang at bhuang@atlantaregional.org .
         """)
 
-with st.expander("Why are some demographic groups not shown in the dashboard?"):
+with st.expander("Why are some demographic groups not shown in the dashboard? And why can’t I look at demographic subgroups within a county (for example, how older people in Fayette County feel about transit)?"):
     st.write("""
-        Some demographic groups are difficult to survey to a significant level of confidence because they are small percentages of the current population,
-         and we do not have enough random samples to be confident in the accuracy of the results. We collected results from people who identify with
-        gender in a different way other than Male or Female. While, these responses influence the survey's tabulations, the sample count was too low to view this groups
-        responses through that specific gender demographic group tabulation. You can see the full list of surveyed groups in the report at 
-        https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey-report/ even though we may not display them in the dashboard.
+        Surveys are based on samples, and the level of confidence we have in any one number is tied to the 
+        size of the sample underlying that number. We suppress results when the underlying sample is too 
+        small for an estimate to meet our confidence standards. Our sampling method ensures that we obtain reliable 
+        estimates at the county level and for the subgroups we report in the dashboard
+        , but the samples are not large enough to allow us to do both simultaneously
+        . You can see the full list of surveyed groups in the report at https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/ even though we may not display them in the dashboard.
         """)
 
 with st.expander("Why aren't questions on 'X topic' or more questions on 'Y topic' asked in the survey?"):
@@ -128,7 +128,7 @@ with st.expander("Why aren't questions on 'X topic' or more questions on 'Y topi
         Costs of doing any extensive surveying continue to mount. Reasons such as
         1. expanding the number of questions asked in a survey tends to reduce response rate and increase costs
         2. asking just one question in a topic area is generally unhelpful
-        3. ARC has many "mission-centric areas (like transportation and land use) that we focus on 
+        3. ARC has many "mission-centric areas" (like transportation and land use) that we focus on 
         4. There are politically sensitive issues in which a regional commission shouldn't be involved.
         
         That said, reach out to Bill Huang at bhuang@atlantaregional.org if you want to suggest a question that might be viable for the survey.
@@ -136,15 +136,9 @@ with st.expander("Why aren't questions on 'X topic' or more questions on 'Y topi
 
 with st.expander("Can I export the data or download the dashboard graphics?"):
     st.write("""
-        Yes you can! If you hover over the top right hand corner of the graphs, you will see a "..." symbol button.
+        Yes you can! If you hover over the top right-hand corner of the graphs, you will see a "..." symbol button.
         Clicking on that will give you the option download the dashboard graphics.
-        To access the data, you can find the tables on https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey-report/. 
-        """)
-
-with st.expander("Could I get crosstabs of the demographic results by county, rather than just by region? For instance, I'd like to know what older people in Fayette County think about transit."):
-    st.write("""
-        No. While extracting those results would technically be possible, that level of data is statistically insignificant. As
-        such, they might be used inadvertently to inform or support inaccurate conclusions or decisions.
+        To access the data, you can find the tables on https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/. 
         """)
 
 with st.expander("What area(s) is (are) cover by the MAS survey?"):
@@ -158,26 +152,42 @@ with st.expander("What area(s) is (are) cover by the MAS survey?"):
 
 with st.expander("Why do some graphs not include certain years, answers, or questions?"):
     st.write("""
-        Not every question was asked every year and not every answer for a question was avaliable every year. The survey
-        also was not conducted every year. The MAS data before 2016 data is unavaliable in this dashboard.
-        For example, the MAS survey was not conducted in 2022.
+        Not every question was asked every year, response categories have evolved over time
+        , and the MAS itself was not conducted in 2022. We include MAS only from 2016 forward in this dashboard
+        , as it provides the most comparable results. And we suppress the time series on a question if the question 
+        wording or response categories have changed enough that the data are no longer comparable.
         """)
 
 with st.expander("What is the level of statistical significance of the survey results?"):
     st.write("""
         Again, there is variation. At the regional level (whatever the overall region has been, in any given year), results have
-        also had margins of error (MOEs) of under 2%, usually under 1.5%, meaning that the "true" result is only a maximum
+        also had margins of error (MOEs) of under 2%, usually under 1.5%, meaning that we are reasonably confident that 
+        the "true" result is only a maximum
         of 2% higher or lower than the sampled result that is reported. For the core, larger counties, as well as for the City of
         Atlanta, MOEs have ranged from 3% to 5%. For smaller suburban and exurban counties, MOEs have ranged from 5%
         to 7%.
         """)
 
+with st.expander("Why do some percentages for a group or response category not exactly match those reported in other MAS materials?"):
+    st.write("""
+        These mismatches appear due to rounding errors. In fact, multiple steps of rounding are required for us to self-tabulate the results for a custom developed dashboard. 
+        There is some numerical imprecision received in the survey results record delivery which affect the tabulation calculations in this dashboard. 
+        On top of that, we are conservative with the numerical precision we display on the dashboard which is why another iteration of rounding occurs to remove decimal places on our dashboard. 
+        This sometime results in a 1-2% imprecision in the dashboard tabulated numbers compared to the survey tables.
+        \n Guidance on using the numbers:
+        \n The safest method for result numbers is to use the tables and numbers in the report and tabular files on https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/
+        . The dashboard is meant to explore the data in an accessible, intuitive
+        , and multifaceted way but may not match the official report down to the decimal digit.
+        \nDifferences of 0-3% between different response categories should not be evaluated as notable; only differences accounting for this 1-2% imprecision should be noted
+        """)
+
 with st.expander("How many people are surveyed (i.e. what is the N)?"):
     st.write("""
-        The N has changed with the coverage and the methodology. In the first year of the survey (2013), with regional-only
-        significance, 2,200 people were surveyed. Since then, the N has varied from about 4,000 to about 5,500. The number
-        surveyed by jurisdiction has varied between 200 and 500. Fulton has been surveyed above 600 in various years due 
-        to oversampling for reporting on the City of Atlanta sub geography.
+        The N has changed with the coverage and the methodology. In 2013, only 2,200 people were surveyed. 
+        A sample of this size allowed us to report regionwide figures but not county-specific results. 
+        The N was increased in subsequent years in order to allow us to report county-level data and has varied from about 
+        4,000 to about 5,500. The number surveyed by jurisdiction has varied between 200 and 500. 
+        Fulton has been surveyed above 600 in various years due to oversampling for reporting on the City of Atlanta sub geography.
         """)
 
 # Logo display

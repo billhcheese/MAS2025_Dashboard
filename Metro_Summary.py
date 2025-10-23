@@ -1442,7 +1442,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 st.altair_chart(response_chart + response_chart_label, use_container_width=True)
-st.caption("Note: Remaining percentages are either Don't Know or Not Available.")
+st.caption("Note: Remaining percentages are either Don't Know or Not Available.  Percentages may vary slightly from those reported in other MAS products, go to FAQ for more details.")
 if st.session_state.is_mobile is False:
     st.markdown("""
                 <span style='color: #59595b; font-size: 15px; font-weight:600 ;'>
