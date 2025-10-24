@@ -183,30 +183,31 @@ chart_configs = {
             "exclude_responses": ["DK"],
             "custom_order": ["Housing Affordability", "Traffic", "Economy", "Crime", "Local Tax Increases", "Other", "Infrastructure", "Quality of Local Schools", "Public Health", "Environmental Pollution"],
             "custom_colors": {
-                "Traffic": "#648FFF",
-                "Environmental Pollution": "#2D3A5A",
-                "Infrastructure": "#AE1EC7",
-                "Local Tax Increases": "#BED77C",
-                "Crime": "#FFB000", 
                 "Housing Affordability": "#FE6100",
+                "Traffic": "#648FFF",
                 "Economy": "#DC267F",
+                "Crime": "#FFB000",
+                "Local Tax Increases": "#BED77C",
+                "Infrastructure": "#AE1EC7",
                 "Quality of Local Schools": "#9DA786",
                 "Public Health": "#425FA2",
-                "Other": "#AF1737"
+                "Environmental Pollution": "#2D3A5A",
+                "Other": "#AF1737",
+
                 }
         },
         "2024": {
             "exclude_responses": ["DK"],
             "custom_order": ["Economy", "Crime", "Transportation", "Human Services", "Taxes", "Public Health", "Public Education", "Race Relations", "Other"],
             "custom_colors": {
+                "Economy": "#DC267F",
+                "Crime": "#FFB000",
                 "Transportation": "#648FFF",
                 "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
                 "Taxes": "#BED77C",
-                "Crime": "#FFB000",
-                "Economy": "#DC267F",
-                "Public Education": "#9DA786",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",
                 "Other": "#AF1737"
                 }
             },
@@ -214,14 +215,14 @@ chart_configs = {
             "exclude_responses": ["DK"],
             "custom_order": ["Economy", "Crime", "Transportation", "Human Services", "Taxes", "Public Health", "Public Education", "Race Relations", "Other"],
             "custom_colors": {
+                "Economy": "#DC267F",
+                "Crime": "#FFB000",
                 "Transportation": "#648FFF",
                 "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
                 "Taxes": "#BED77C",
-                "Crime": "#FFB000",
-                "Economy": "#DC267F",
-                "Public Education": "#9DA786",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -229,14 +230,14 @@ chart_configs = {
             "exclude_responses": ["DK"],
             "custom_order": ["Crime", "Economy", "Transportation", "Public Health", "Race Relations", "Human Services", "Public Education", "Taxes", "Other"],
             "custom_colors": {
+                "Economy": "#DC267F",
+                "Crime": "#FFB000",
                 "Transportation": "#648FFF",
                 "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
                 "Taxes": "#BED77C",
-                "Crime": "#FFB000",
-                "Economy": "#DC267F",
-                "Public Education": "#9DA786",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -244,14 +245,14 @@ chart_configs = {
             "exclude_responses": ["DK"],
             "custom_order": ["Public Health", "Crime", "Economy", "Transportation", "Race Relations", "Human Services", "Public Education", "Taxes", "Other"],
             "custom_colors": {
+                "Economy": "#DC267F",
+                "Crime": "#FFB000",
                 "Transportation": "#648FFF",
                 "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
                 "Taxes": "#BED77C",
-                "Crime": "#FFB000",
-                "Economy": "#DC267F",
-                "Public Education": "#9DA786",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -260,13 +261,13 @@ chart_configs = {
             "custom_order": ["Transportation", "Crime", "Economy", "Human Services", "Public Education", "Public Health", "Taxes", "Race Relations", "Other"],
             "custom_colors": {
                 "Transportation": "#648FFF",
-                "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
-                "Taxes": "#BED77C",
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
-                "Public Education": "#9DA786",
+                "Human Services": "#AE1EC7",
+                "Taxes": "#BED77C",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -275,13 +276,13 @@ chart_configs = {
             "custom_order": ["Transportation", "Crime", "Public Education", "Economy", "Human Services", "Public Health", "Taxes", "Race Relations", "Other"],
             "custom_colors": {
                 "Transportation": "#648FFF",
-                "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
-                "Taxes": "#BED77C",
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
-                "Public Education": "#9DA786",
+                "Human Services": "#AE1EC7",
+                "Taxes": "#BED77C",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -290,13 +291,13 @@ chart_configs = {
             "custom_order": ["Transportation", "Crime", "Economy", "Human Services", "Public Education", "Public Health", "Taxes", "Race Relations", "Other"],
             "custom_colors": {
                 "Transportation": "#648FFF",
-                "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
-                "Taxes": "#BED77C",
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
-                "Public Education": "#9DA786",
+                "Human Services": "#AE1EC7",
+                "Taxes": "#BED77C",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
@@ -305,13 +306,13 @@ chart_configs = {
             "custom_order": ["Transportation", "Crime", "Economy", "Public Education", "Human Services", "Race Relations", "Public Health", "Taxes",  "Other"],
             "custom_colors": {
                 "Transportation": "#648FFF",
-                "Human Services": "#AE1EC7",
-                "Race Relations": "#FE6100",
-                "Taxes": "#BED77C",
                 "Crime": "#FFB000",
                 "Economy": "#DC267F",
-                "Public Education": "#9DA786",
+                "Human Services": "#AE1EC7",
+                "Taxes": "#BED77C",
                 "Public Health": "#425FA2",
+                "Public Education": "#9DA786",
+                "Race Relations": "#FE6100",                
                 "Other": "#AF1737"
                 }
             },
