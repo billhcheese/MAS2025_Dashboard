@@ -141,7 +141,7 @@ with st.expander("Can I export the data or download the dashboard graphics?"):
         To access the data, you can find the tables on https://atlantaregional.org/what-we-do/research-and-data/metro-atlanta-speaks-survey/. 
         """)
 
-with st.expander("What area(s) is (are) cover by the MAS survey?"):
+with st.expander("What area(s) is (are) covered by the MAS survey?"):
     st.write("""
         The areas covered have varied by iteration of the survey. The "prime" focus has always been the Atlanta Regional
         Commission area. As such, for the last five years, MAS has covered the eleven counties of ARC along with the City of
