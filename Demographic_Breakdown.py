@@ -1595,7 +1595,7 @@ if len(df_year_filtered) > 0:
                     "subtitleFontSize": 12,
                     "subtitleColor": "#666666"
                 },
-                height=600 if st.session_state.is_mobile else 400  # Taller chart for mobile view
+                height=600 if st.session_state.is_mobile else alt.Step(20)#450  # Taller chart for mobile view
             )
             .configure_title(
                 subtitlePadding=10
@@ -1653,15 +1653,17 @@ if len(df_year_filtered) > 0:
                 #    selected_demo_value = st.selectbox(f"Or select {selected_demographic} for historical analysis:", demo_values)
             except (KeyError, IndexError, TypeError) as e:
                 # Fallback to selectbox if there's any error accessing selection data
-                st.warning(f"Chart selection error: {e}. Please use the dropdown below.")
-                selected_demo_value = st.selectbox(f"Select {selected_demographic} for historical analysis:", demo_values)
+                st.warning(f"Chart selection error: {e}.")
+                #selected_demo_value = st.selectbox(f"Select {selected_demographic} for historical analysis:", demo_values)
+                selected_demo_value = None
         else:
             # Fallback to selectbox if no selection
             #selected_demo_value = st.selectbox(f"{selected_demographic} Demographic Group",demo_values)
             selected_demo_value = None
     else:
         # Fallback to selectbox if no chart data
-        selected_demo_value = st.selectbox(f"Select {selected_demographic} for historical analysis", demo_values)
+        #selected_demo_value = st.selectbox(f"Select {selected_demographic} for historical analysis", demo_values)
+        selected_demo_value = None
 
     if demo_column in df_question.columns and selected_demo_value:
         # Handle Atlanta as special case for county analysis
