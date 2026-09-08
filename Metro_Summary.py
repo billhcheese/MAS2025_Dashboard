@@ -1298,12 +1298,31 @@ else:
     selected_year = "2025"
 
 # --- Response Distribution ---
+# Use metrowt (not countywt) here: this is a metro-wide aggregate spanning all
+# 11 counties, and only metrowt carries the post-stratification correction for
+# each county's share of the metro population. countywt is only valid when the
+# data has been subset to a single county.
 response_summary = (
-    df_filtered.groupby("response")["countywt"]
+    df_filtered.groupby("response")["metrowt"]
     .sum()
     .reset_index()
 )
-response_summary["percent"] = (response_summary["countywt"] / response_summary["countywt"].sum())
+response_summary["percent"] = (response_summary["metrowt"] / response_summary["metrowt"].sum())
+
+# --- To match ARC's regional-data-crosstabs-2025.xlsx bit-for-bit instead ---
+# ARC's crosstab export rounds each weighted cell to the nearest whole person
+# BEFORE computing the percentage, rather than dividing the raw float sums.
+# This is a cosmetic/display convention, not a more statistically correct one
+# (see FAQ / chat history) -- only enable this if you need exact reconciliation
+# against that specific xlsx deliverable.
+#
+# response_summary = (
+#     df_filtered.groupby("response")["metrowt"]
+#     .sum()
+#     .round(0)
+#     .reset_index()
+# )
+# response_summary["percent"] = (response_summary["metrowt"] / response_summary["metrowt"].sum())
 
 # Apply custom configurations if available for the selected year only
 # If no year-specific config exists, use Altair defaults
@@ -1456,18 +1475,33 @@ st.markdown("---")  # Add a separator line
 if "survey year" in df_question.columns and question_hist[selected_question] == 1:
     # Use df_question (not df_filtered) to show all years regardless of year filter
     # But apply demographic filter if one is selected
+    # metrowt, not countywt: this trend spans all counties for each year (see
+    # note on the Response Distribution block above).
     year_trend = (
-        df_question.groupby(["survey year", "response"])["countywt"]
+        df_question.groupby(["survey year", "response"])["metrowt"]
         .sum()
         .reset_index()
     )
-    
+
     # Calculate percentages within each year
     year_trend["percent"] = (
-        year_trend.groupby("survey year")["countywt"]
+        year_trend.groupby("survey year")["metrowt"]
         .transform(lambda x: x / x.sum())
     )
-    
+
+    # --- To match ARC's xlsx convention instead (round weighted cell counts to
+    # the nearest whole person before dividing -- see note above) ---
+    # year_trend = (
+    #     df_question.groupby(["survey year", "response"])["metrowt"]
+    #     .sum()
+    #     .round(0)
+    #     .reset_index()
+    # )
+    # year_trend["percent"] = (
+    #     year_trend.groupby("survey year")["metrowt"]
+    #     .transform(lambda x: x / x.sum())
+    # )
+
     # Apply the same custom configurations as the main response chart
     # Use 2025 configuration for year-over-year trends
     question_config = chart_configs.get(selected_question, {})

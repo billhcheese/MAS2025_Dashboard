@@ -1390,12 +1390,19 @@ if len(df_year_filtered) > 0:
         # Create demographic breakdown with Atlanta only for Jurisdiction demographic
         county_data = []
         
-        # Process ALL demographic groups using countywt
+        # countywt is only valid when the subgroup is a single county (it's
+        # normalized to that county's own population and doesn't carry the
+        # correction for each county's share of the metro population). Every
+        # other demographic (Gender, Age, Race, Income, ...) spans all 11
+        # counties, so those need metrowt instead.
+        regular_weight_column = "countywt" if demo_column == "county" else "metrowt"
+
         if len(df_year_filtered) > 0:
             regular_crosstab = (
-                df_year_filtered.groupby([demo_column, "response"])["countywt"]
+                df_year_filtered.groupby([demo_column, "response"])[regular_weight_column]
                 .sum()
                 .reset_index()
+                .rename(columns={regular_weight_column: "countywt"})
             )
             county_data.append(regular_crosstab)
         
@@ -1427,6 +1434,16 @@ if len(df_year_filtered) > 0:
                 county_crosstab.groupby(demo_column)["countywt"]
                 .transform(lambda x: x / x.sum())
             )
+
+            # --- To match ARC's xlsx convention instead (round each cell's
+            # weighted count to the nearest whole person before dividing --
+            # cosmetic/display convention, not more statistically correct,
+            # see FAQ / chat history) ---
+            # county_crosstab["countywt"] = county_crosstab["countywt"].round(0)
+            # county_crosstab["percent"] = (
+            #     county_crosstab.groupby(demo_column)["countywt"]
+            #     .transform(lambda x: x / x.sum())
+            # )
         else:
             county_crosstab = pd.DataFrame()
     else:
@@ -1677,9 +1694,12 @@ if len(df_year_filtered) > 0:
                 df_demo_filtered = pd.DataFrame()
                 weight_column = "countywt"
         else:
-            # Regular demographic filtering
+            # Regular demographic filtering.
+            # countywt is only valid when filtering down to a single county;
+            # every other demographic spans all 11 counties and needs metrowt
+            # (see note on the crosstab block above).
             df_demo_filtered = df_question[df_question[demo_column] == selected_demo_value].copy()
-            weight_column = "countywt"
+            weight_column = "countywt" if demo_column == "county" else "metrowt"
         
         if len(df_demo_filtered) > 0 and "survey year" in df_demo_filtered.columns:
             # Calculate historical trends for the selected demographic
@@ -1694,6 +1714,21 @@ if len(df_year_filtered) > 0:
                 historical_trend.groupby("survey year")[weight_column]
                 .transform(lambda x: x / x.sum())
             )
+
+            # --- To match ARC's xlsx convention instead (round each cell's
+            # weighted count to the nearest whole person before dividing --
+            # cosmetic/display convention, not more statistically correct,
+            # see FAQ / chat history) ---
+            # historical_trend = (
+            #     df_demo_filtered.groupby(["survey year", "response"])[weight_column]
+            #     .sum()
+            #     .round(0)
+            #     .reset_index()
+            # )
+            # historical_trend["percent"] = (
+            #     historical_trend.groupby("survey year")[weight_column]
+            #     .transform(lambda x: x / x.sum())
+            # )
         else:
             st.warning(f"No historical data available for {selected_demographic}.")
             historical_trend = pd.DataFrame()
